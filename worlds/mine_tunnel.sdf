@@ -1,0 +1,123 @@
+<?xml version="1.0" ?>
+<sdf version="1.9">
+  <world name="mine_tunnel">
+    <physics name="1ms" type="ignored">
+      <max_step_size>0.004</max_step_size>
+      <real_time_factor>1.0</real_time_factor>
+    </physics>
+    <plugin filename="gz-sim-physics-system" name="gz::sim::systems::Physics"/>
+    <plugin filename="gz-sim-user-commands-system" name="gz::sim::systems::UserCommands"/>
+    <plugin filename="gz-sim-scene-broadcaster-system" name="gz::sim::systems::SceneBroadcaster"/>
+    <plugin filename="gz-sim-sensors-system" name="gz::sim::systems::Sensors">
+      <render_engine>ogre2</render_engine>
+    </plugin>
+    <plugin filename="gz-sim-imu-system" name="gz::sim::systems::Imu"/>
+    <plugin filename="gz-sim-air-pressure-system" name="gz::sim::systems::AirPressure"/>
+    <plugin filename="gz-sim-magnetometer-system" name="gz::sim::systems::Magnetometer"/>
+    <plugin filename="gz-sim-navsat-system" name="gz::sim::systems::NavSat"/>
+    <spherical_coordinates>
+      <surface_model>EARTH_WGS84</surface_model>
+      <latitude_deg>36.8065</latitude_deg>
+      <longitude_deg>10.1815</longitude_deg>
+      <elevation>0</elevation>
+      <heading_deg>0</heading_deg>
+    </spherical_coordinates>
+
+
+    
+
+    <light type="directional" name="sun">
+      <cast_shadows>true</cast_shadows>
+      <pose>0 0 10 0 0 0</pose>
+      <diffuse>0.6 0.6 0.6 1</diffuse>
+      <specular>0.2 0.2 0.2 1</specular>
+      <direction>-0.5 0.1 -0.9</direction>
+    </light>
+
+    <!-- Ground -->
+    <model name="ground">
+      <static>true</static>
+      <link name="link">
+        <collision name="c"><geometry><plane><normal>0 0 1</normal><size>60 60</size></plane></geometry></collision>
+        <visual name="v">
+          <geometry><plane><normal>0 0 1</normal><size>60 60</size></plane></geometry>
+          <material><ambient>0.25 0.22 0.2 1</ambient><diffuse>0.25 0.22 0.2 1</diffuse></material>
+        </visual>
+      </link>
+    </model>
+
+    <!-- Tunnel walls: main (x 0..20, width 3) + branch at x=12 going +y to y=8 -->
+    <model name="tunnel">
+      <static>true</static>
+      <!-- right wall -->
+      <link name="wall_right"><pose>10 -1.5 1.25 0 0 0</pose>
+        <collision name="c"><geometry><box><size>20 0.2 2.5</size></box></geometry></collision>
+        <visual name="v"><geometry><box><size>20 0.2 2.5</size></box></geometry>
+          <material><ambient>0.45 0.4 0.35 1</ambient><diffuse>0.45 0.4 0.35 1</diffuse></material></visual>
+      </link>
+      <!-- left wall, before branch -->
+      <link name="wall_left_a"><pose>5.5 1.5 1.25 0 0 0</pose>
+        <collision name="c"><geometry><box><size>11 0.2 2.5</size></box></geometry></collision>
+        <visual name="v"><geometry><box><size>11 0.2 2.5</size></box></geometry>
+          <material><ambient>0.45 0.4 0.35 1</ambient><diffuse>0.45 0.4 0.35 1</diffuse></material></visual>
+      </link>
+      <!-- left wall, after branch -->
+      <link name="wall_left_b"><pose>16.5 1.5 1.25 0 0 0</pose>
+        <collision name="c"><geometry><box><size>7 0.2 2.5</size></box></geometry></collision>
+        <visual name="v"><geometry><box><size>7 0.2 2.5</size></box></geometry>
+          <material><ambient>0.45 0.4 0.35 1</ambient><diffuse>0.45 0.4 0.35 1</diffuse></material></visual>
+      </link>
+      <!-- end wall main -->
+      <link name="wall_end"><pose>20 0 1.25 0 0 0</pose>
+        <collision name="c"><geometry><box><size>0.2 3 2.5</size></box></geometry></collision>
+        <visual name="v"><geometry><box><size>0.2 3 2.5</size></box></geometry>
+          <material><ambient>0.45 0.4 0.35 1</ambient><diffuse>0.45 0.4 0.35 1</diffuse></material></visual>
+      </link>
+      <!-- branch walls -->
+      <link name="branch_w1"><pose>11 4.75 1.25 0 0 0</pose>
+        <collision name="c"><geometry><box><size>0.2 6.5 2.5</size></box></geometry></collision>
+        <visual name="v"><geometry><box><size>0.2 6.5 2.5</size></box></geometry>
+          <material><ambient>0.45 0.4 0.35 1</ambient><diffuse>0.45 0.4 0.35 1</diffuse></material></visual>
+      </link>
+      <link name="branch_w2"><pose>13 4.75 1.25 0 0 0</pose>
+        <collision name="c"><geometry><box><size>0.2 6.5 2.5</size></box></geometry></collision>
+        <visual name="v"><geometry><box><size>0.2 6.5 2.5</size></box></geometry>
+          <material><ambient>0.45 0.4 0.35 1</ambient><diffuse>0.45 0.4 0.35 1</diffuse></material></visual>
+      </link>
+      <link name="branch_end"><pose>12 8 1.25 0 0 0</pose>
+        <collision name="c"><geometry><box><size>2 0.2 2.5</size></box></geometry></collision>
+        <visual name="v"><geometry><box><size>2 0.2 2.5</size></box></geometry>
+          <material><ambient>0.45 0.4 0.35 1</ambient><diffuse>0.45 0.4 0.35 1</diffuse></material></visual>
+      </link>
+    </model>
+
+    <!-- EVENT 1: gas zone (red, no collision) at (7,0) -->
+    <model name="event_gas">
+      <static>true</static><pose>7 0 0.01 0 0 0</pose>
+      <link name="link">
+        <visual name="v"><geometry><cylinder><radius>1.0</radius><length>0.02</length></cylinder></geometry>
+          <material><ambient>1 0.1 0.1 1</ambient><diffuse>1 0.1 0.1 1</diffuse></material></visual>
+      </link>
+    </model>
+
+    <!-- EVENT 2: victim (blue) at end of branch (12,7) -->
+    <model name="event_victim">
+      <static>true</static><pose>12 7 0.25 0 0 0</pose>
+      <link name="link">
+        <collision name="c"><geometry><box><size>0.5 1.5 0.4</size></box></geometry></collision>
+        <visual name="v"><geometry><box><size>0.5 1.5 0.4</size></box></geometry>
+          <material><ambient>0.1 0.3 1 1</ambient><diffuse>0.1 0.3 1 1</diffuse></material></visual>
+      </link>
+    </model>
+
+    <!-- EVENT 3: collapse / rubble (grey) at (17,0) -->
+    <model name="event_rubble">
+      <static>true</static><pose>17 0 0.4 0 0 0.3</pose>
+      <link name="link">
+        <collision name="c"><geometry><box><size>1 2.2 0.8</size></box></geometry></collision>
+        <visual name="v"><geometry><box><size>1 2.2 0.8</size></box></geometry>
+          <material><ambient>0.5 0.5 0.5 1</ambient><diffuse>0.5 0.5 0.5 1</diffuse></material></visual>
+      </link>
+    </model>
+</world>
+</sdf>
