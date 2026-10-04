@@ -236,7 +236,3 @@ ieee_project/
   worlds/mine_tunnel.sdf
   models/{x500, x500_depth, OakD-Lite}
 ```
-
-## 11. Next steps
-
-Reactive exploration for the Writer, fire-aware path planning for the Executor (`avoid`), physical beacon models in Gazebo, and a real RF/LoRa link for the final phase.
